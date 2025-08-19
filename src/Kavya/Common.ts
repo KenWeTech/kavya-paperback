@@ -220,6 +220,7 @@ export const DEFAULT_VALUES: any = {
 	showOnDeck: true,
 	showRecentlyUpdated: true,
 	showNewlyAdded: true,
+	showReadingLists: true,
 	excludeUnsupportedLibrary: false,
 	
 	enableRecursiveSearch: false
@@ -256,6 +257,7 @@ export async function getOptions(
 	showOnDeck: boolean;
 	showRecentlyUpdated: boolean;
 	showNewlyAdded: boolean;
+	showReadingLists: boolean;
 	excludeUnsupportedLibrary: boolean;
 	enableRecursiveSearch: boolean;
 }> {
@@ -263,9 +265,10 @@ export async function getOptions(
 	const showOnDeck = (await stateManager.retrieve('showOnDeck') as boolean) ?? DEFAULT_VALUES.showOnDeck;
 	const showRecentlyUpdated = (await stateManager.retrieve('showRecentlyUpdated') as boolean) ?? DEFAULT_VALUES.showRecentlyUpdated;
 	const showNewlyAdded = (await stateManager.retrieve('showNewlyAdded') as boolean) ?? DEFAULT_VALUES.showNewlyAdded;
+	const showReadingLists = (await stateManager.retrieve('showReadingLists') as boolean) ?? DEFAULT_VALUES.showReadingLists;
 	const excludeUnsupportedLibrary = (await stateManager.retrieve('excludeUnsupportedLibrary') as boolean) ?? DEFAULT_VALUES.excludeUnsupportedLibrary;
 
 	const enableRecursiveSearch = (await stateManager.retrieve('enableRecursiveSearch') as boolean) ?? DEFAULT_VALUES.enableRecursiveSearch;
 
-	return { pageSize, showOnDeck, showRecentlyUpdated, showNewlyAdded, excludeUnsupportedLibrary, enableRecursiveSearch };
+	return { pageSize, showOnDeck, showRecentlyUpdated, showNewlyAdded, showReadingLists, excludeUnsupportedLibrary, enableRecursiveSearch };
 }

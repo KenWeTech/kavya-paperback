@@ -121,6 +121,19 @@ export const serverSettingsMenu = (
 							})
 						}),
 						App.createDUISwitch({
+							id: 'showReadingLists',
+							label: 'Show Reading Lists',
+							value: App.createDUIBinding({
+								async get() {
+									return values.showReadingLists;
+								},
+								async set(value) {
+									values.showReadingLists = value;
+									await setStateData(stateManager, interceptor, values);
+								}
+							})
+						}),
+						App.createDUISwitch({
 							id: 'excludeUnsupportedLibrary',
 							label: 'Exclude Book & Novel Type Libraries',
 							value: App.createDUIBinding({
@@ -169,11 +182,12 @@ export async function retrieveStateData(stateManager: SourceStateManager) {
 	const showOnDeck = (await stateManager.retrieve('showOnDeck') as boolean) ?? DEFAULT_VALUES.showOnDeck;
 	const showRecentlyUpdated = (await stateManager.retrieve('showRecentlyUpdated') as boolean) ?? DEFAULT_VALUES.showRecentlyUpdated;
 	const showNewlyAdded = (await stateManager.retrieve('showNewlyAdded') as boolean) ?? DEFAULT_VALUES.showNewlyAdded;
+	const showReadingLists = (await stateManager.retrieve('showReadingLists') as boolean) ?? DEFAULT_VALUES.showReadingLists;
 	const excludeUnsupportedLibrary = (await stateManager.retrieve('excludeUnsupportedLibrary') as boolean) ?? DEFAULT_VALUES.excludeUnsupportedLibrary;
 
 	const enableRecursiveSearch = (await stateManager.retrieve('enableRecursiveSearch') as boolean) ?? DEFAULT_VALUES.enableRecursiveSearch;
 
-	return { kavitaAddress, kavitaAPIKey, pageSize, showOnDeck, showRecentlyUpdated, showNewlyAdded, excludeUnsupportedLibrary, enableRecursiveSearch }
+	return { kavitaAddress, kavitaAPIKey, pageSize, showOnDeck, showRecentlyUpdated, showNewlyAdded, showReadingLists, excludeUnsupportedLibrary, enableRecursiveSearch }
 }
 
 export async function setStateData(stateManager: SourceStateManager, interceptor: KavitaRequestInterceptor, data: Record<string, any>) {
