@@ -28,6 +28,7 @@ import {
 	getKavitaAPI,
 	getOptions,
 	getSeriesDetails,
+	getReadingListDetails,
 	getServerUnavailableMangaTiles,
 	reqeustToString
 } from './Common';
@@ -63,10 +64,14 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 	}
 
 	async getMangaDetails(mangaId: string): Promise<SourceManga> {
+		const detailsFunction = mangaId.startsWith('rl-') 
+			? getReadingListDetails 
+			: getSeriesDetails;
+			
 		return App.createSourceManga({
 			id: mangaId,
 			mangaInfo: App.createMangaInfo({
-				...(await getSeriesDetails(mangaId, this.requestManager, this.stateManager))
+				...(await detailsFunction(mangaId, this.requestManager, this.stateManager))
 			})
 		});
 	}

@@ -147,6 +147,51 @@ export async function getSeriesDetails(mangaId: string, requestManager: RequestM
 	};
 }
 
+export async function getReadingListDetails(mangaId: string, requestManager: RequestManager, stateManager: SourceStateManager) {
+	const kavitaAPI = await getKavitaAPI(stateManager);
+	const readingListId = mangaId.replace('rl-', '');
+
+	const readingListRequest = App.createRequest({
+		url: `${kavitaAPI.url}/ReadingList?readingListId=${readingListId}`,
+		method: 'GET',
+	})
+
+	const readingListMetadataRequest = App.createRequest({
+		url: `${kavitaAPI.url}/ReadingList/all-people?readingListId=${readingListId}`,
+		method: 'GET',
+	})
+
+	const promises: Promise<Response>[] = [];
+
+	promises.push(requestManager.schedule(readingListRequest, 1));
+	promises.push(requestManager.schedule(readingListMetadataRequest, 1));
+
+	const responses: Response[] = await Promise.all(promises);
+
+	const readingListResult = typeof responses[0]?.data === 'string' ? JSON.parse(responses[0]?.data) : responses[0]?.data;
+	const readingListMetadataResult = typeof responses[1]?.data === 'string' ? JSON.parse(responses[1]?.data) : responses[1]?.data;
+
+	let artists = [];
+	for (const penciller of readingListMetadataResult.pencillers) {
+		artists.push(penciller.name);
+	}
+
+	let authors = [];
+	for (const writer of readingListMetadataResult.writers) {
+		authors.push(writer.name);
+	}
+
+	return {
+		image: `${kavitaAPI.url}/image/readinglist-cover?readingListId=${readingListId}&apiKey=${kavitaAPI.key}`,
+		artist: artists.join(', '),
+		author: authors.join(', '),
+		desc: "",
+		status: 'Unknown',
+		hentai: false,
+		titles: [readingListResult.title],
+	};
+}
+
 export function reqeustToString(request: Request): string {
 	return JSON.stringify({
 		url: request.url,
