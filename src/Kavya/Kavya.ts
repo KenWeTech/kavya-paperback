@@ -74,15 +74,6 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 	async getChapters(mangaId: string): Promise<Chapter[]> {
 		const kavitaAPI = await getKavitaAPI(this.stateManager);
 
-		const request = App.createRequest({
-			url: `${kavitaAPI.url}/Series/volumes`,
-			param: `?seriesId=${mangaId}`,
-			method: 'GET',
-		});
-
-		const response = await this.requestManager.schedule(request, 1);
-		const result = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-
 		const chapters: any[] = [], specials: any[] = [];
 
 		if(mangaId.startsWith('rl-'))
@@ -96,17 +87,55 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 			const response = await this.requestManager.schedule(request, 1);
 			const result = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
 
+			let i = 0;
+			let j = 1;
+
 			for (const rlItem of result) {
 				const progress: string = rlItem.pagesRead === 0 ? '' : rlItem.pagesTotal === rlItem.pagesRead ? '· Read' : `· Reading ${rlItem.pagesRead} page`;
 				
 				const item: any = {
 					id: `${rlItem.chapterId}`,
 					mangaId: rlItem.seriesId,
-					chapNum: rlItem.order + 1,
-					name: `${rlItem.seriesName} - Issue ${rlItem.chapterNumber}`,
+					chapNum: rlItem.chapterNumber === '-100000' ? 1 : (rlItem.isSpecial ? j++ : parseFloat(rlItem.chapterNumber)), // chapter.number is 0 when it's a special
+					name: rlItem.seriesName, // Since a Reading List is composed by various series, the serie name will be printed here instead of the chapter name
 					time: new Date(rlItem.releaseDate),
+					volume: rlItem.isSpecial ? 0 : rlItem.volumeNumber === '-100000' ? 0 : parseFloat(rlItem.volumeNumber) , // assign both special and chapters w/o volumes w/ volume 0 as it's hidden by paperback
 					group: `${(rlItem.isSpecial ? 'Specials · ' : '')}${rlItem.pagesTotal} pages ${progress}`,
-					_index: rlItem.order,
+					_index: i++,
+					// sortIndex is unused, as it seems to have an issue when changing the sort order
+				};
+				
+				if (rlItem.isSpecial) specials.push(item);
+				else chapters.push(item);
+			}
+		} else {
+			const request = App.createRequest({
+				url: `${kavitaAPI.url}/Series/volumes`,
+				param: `?seriesId=${mangaId}`,
+				method: 'GET',
+			});
+
+			const response = await this.requestManager.schedule(request, 1);
+			const result = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+
+		let i = 0;
+		let j = 1;
+		for (const volume of result) {
+			for (const chapter of volume.chapters) {
+				const name = chapter.number === chapter.range ? chapter.titleName ?? '' : `${chapter.range.replace(`${chapter.number}-`, '')}${chapter.titleName ? ` - ${chapter.titleName}` : ''}`;
+				const title: string = chapter.range.endsWith('.epub') ? chapter.range.slice(0, -5) : chapter.range.slice(0, -4);
+				const progress: string = chapter.pagesRead === 0 ? '' : chapter.pages === chapter.pagesRead ? '· Read' : `· Reading ${chapter.pagesRead} page`;
+				
+				const item: any = {
+					id: `${chapter.id}`,
+					mangaId: mangaId,
+					chapNum: chapter.number === '-100000' ? 1 : (chapter.isSpecial ? j++ : parseFloat(chapter.number)), // chapter.number is 0 when it's a special
+					name: chapter.isSpecial ? title : name,
+					time: new Date(chapter.releaseDate === '0001-01-01T00:00:00' ? chapter.created : chapter.releaseDate),
+					volume: chapter.isSpecial ? 0 : volume.name === '-100000' ? 0 : parseFloat(volume.name) , // assign both special and chapters w/o volumes w/ volume 0 as it's hidden by paperback
+					group: `${(chapter.isSpecial ? 'Specials · ' : '')}${chapter.pages} pages ${progress}`,
+					_index: i++,
+					// sortIndex is unused, as it seems to have an issue when changing the sort order
 				};
 				
 				if (chapter.isSpecial) specials.push(item);
