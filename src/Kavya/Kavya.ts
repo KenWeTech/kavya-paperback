@@ -94,15 +94,13 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 				const progress: string = chapter.pagesRead === 0 ? '' : chapter.pages === chapter.pagesRead ? '· Read' : `· Reading ${chapter.pagesRead} page`;
 				
 				const item: any = {
-					id: `${chapter.id}`,
-					mangaId: mangaId,
-					chapNum: chapter.number === '-100000' ? 1 : (chapter.isSpecial ? j++ : parseFloat(chapter.number)), // chapter.number is 0 when it's a special
-					name: chapter.isSpecial ? title : name,
-					time: new Date(chapter.releaseDate === '0001-01-01T00:00:00' ? chapter.created : chapter.releaseDate),
-					volume: chapter.isSpecial ? 0 : volume.name === '-100000' ? 0 : parseFloat(volume.name) , // assign both special and chapters w/o volumes w/ volume 0 as it's hidden by paperback
-					group: `${(chapter.isSpecial ? 'Specials · ' : '')}${chapter.pages} pages ${progress}`,
-					_index: i++,
-					// sortIndex is unused, as it seems to have an issue when changing the sort order
+					id: `${rlItem.chapterId}`,
+					mangaId: rlItem.seriesId,
+					chapNum: rlItem.order + 1,
+					name: `${rlItem.seriesName} #${rlItem.chapterNumber}`,
+					time: new Date(rlItem.releaseDate),
+					group: `${(rlItem.isSpecial ? 'Specials · ' : '')}${rlItem.pagesTotal} pages ${progress}`,
+					_index: rlItem.order,
 				};
 				
 				if (chapter.isSpecial) specials.push(item);
