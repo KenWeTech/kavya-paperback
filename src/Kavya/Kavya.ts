@@ -85,19 +85,25 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 
 		const chapters: any[] = [], specials: any[] = [];
 
-		let i = 0;
-		let j = 1;
-		for (const volume of result) {
-			for (const chapter of volume.chapters) {
-				const name = chapter.number === chapter.range ? chapter.titleName ?? '' : `${chapter.range.replace(`${chapter.number}-`, '')}${chapter.titleName ? ` - ${chapter.titleName}` : ''}`;
-				const title: string = chapter.range.endsWith('.epub') ? chapter.range.slice(0, -5) : chapter.range.slice(0, -4);
-				const progress: string = chapter.pagesRead === 0 ? '' : chapter.pages === chapter.pagesRead ? '· Read' : `· Reading ${chapter.pagesRead} page`;
+		if(mangaId.startsWith('rl-'))
+		{
+			const request = App.createRequest({
+				url: `${kavitaAPI.url}/ReadingList/items`,
+				param: `?readingListId=${mangaId.replace('rl-', '')}`,
+				method: 'GET'
+			});
+
+			const response = await this.requestManager.schedule(request, 1);
+			const result = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+
+			for (const rlItem of result) {
+				const progress: string = rlItem.pagesRead === 0 ? '' : rlItem.pagesTotal === rlItem.pagesRead ? '· Read' : `· Reading ${rlItem.pagesRead} page`;
 				
 				const item: any = {
 					id: `${rlItem.chapterId}`,
 					mangaId: rlItem.seriesId,
 					chapNum: rlItem.order + 1,
-					name: `${rlItem.seriesName} #${rlItem.chapterNumber}`,
+					name: `${rlItem.seriesName} - Issue ${rlItem.chapterNumber}`,
 					time: new Date(rlItem.releaseDate),
 					group: `${(rlItem.isSpecial ? 'Specials · ' : '')}${rlItem.pagesTotal} pages ${progress}`,
 					_index: rlItem.order,
