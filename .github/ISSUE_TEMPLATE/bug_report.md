@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
 Paperback log files are a great help in identifying and resolving issues.
 
 Log files contain sensitive information such as server address and API key,
-so please send them via <ack72.github@gmail.com>.
+so please send them via <KenWeTech.github@gmail.com>.
 And it is recommended to change related API key.
 
 You can get app logs at paperback settings > export app logs,

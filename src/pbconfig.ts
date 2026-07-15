@@ -6,8 +6,8 @@ export default {
     icon: 'icon.png',
     developers: [
         {
-            name: "ACK72",
-            github: "ACK72"
+            name: "KenWeTech",
+            github: "KenWeTech"
         }
     ],
     description: 'Kavita client extension for Paperback',
