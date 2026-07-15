@@ -1473,7 +1473,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const libraryResponse = await this.requestManager.schedule(libraryRequest, 1);
-      const libraryResult = JSON.parse(libraryResponse.data ?? "[]");
+      const libraryResult = JSON.parse(libraryResponse.data || "[]");
       for (const library of libraryResult) {
         if (excludeUnsupportedLibrary && library.type === 2) continue;
         includeLibraryIds.push(library.id);
@@ -1489,7 +1489,7 @@ var _Sources = (() => {
         });
         promises.push(
           this.requestManager.schedule(request, 1).then((response) => {
-            const result = JSON.parse(response.data ?? "[]");
+            const result = JSON.parse(response.data || "[]");
             const names = [];
             const tags = [];
             result.forEach(async (item) => {
@@ -1569,7 +1569,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await this.requestManager.schedule(request, 1);
-      const result = JSON.parse(response.data ?? "[]");
+      const result = JSON.parse(response.data || "[]");
       const excludeLibraryIds = [];
       for (const library of result) {
         if (excludeUnsupportedLibrary && library.type === 2) {
@@ -1622,7 +1622,7 @@ var _Sources = (() => {
         });
         promises.push(
           this.requestManager.schedule(request2, 1).then((response2) => {
-            const result2 = JSON.parse(response2.data ?? "[]");
+            const result2 = JSON.parse(response2.data || "[]");
             this.cacheManager.setCachedData(reqeustToString(request2), result2);
             const tiles = [];
             for (const series of result2) {
@@ -1693,7 +1693,7 @@ var _Sources = (() => {
       }
       if (result === void 0) {
         const response = await this.requestManager.schedule(request, 1);
-        result = JSON.parse(response.data ?? "[]");
+        result = JSON.parse(response.data || "[]");
       }
       if (useBuiltInCache) {
         this.cacheManager.setCachedData(reqeustToString(request), result);
@@ -1705,7 +1705,7 @@ var _Sources = (() => {
           method: "GET"
         });
         const libraryResponse = await this.requestManager.schedule(libraryRequest, 1);
-        const libraryResult = JSON.parse(libraryResponse.data ?? "[]");
+        const libraryResult = JSON.parse(libraryResponse.data || "[]");
         for (const library of libraryResult) {
           if (library.type === 2) excludeLibraryIds.push(library.id);
         }
@@ -1779,7 +1779,7 @@ var _Sources = (() => {
             method: "GET"
           });
           const response = await this.requestManager.schedule(request, 1);
-          const result = JSON.parse(response?.data ?? "{}");
+          const result = JSON.parse(response?.data || "{}");
           return [
             App.createDUISection({
               id: "seriesInfo",
@@ -1850,7 +1850,7 @@ var _Sources = (() => {
             method: "GET"
           });
           const chapterResponse = await this.requestManager.schedule(chapterRequest, 1);
-          const chapterResult = JSON.parse(chapterResponse?.data ?? "{}");
+          const chapterResult = JSON.parse(chapterResponse?.data || "{}");
           const progressRequest = App.createRequest({
             url: `${kavitaAPI.url}/Reader/progress`,
             data: JSON.stringify({
