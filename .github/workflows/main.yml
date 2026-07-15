@@ -3,10 +3,12 @@ on:
     branches:
       - main
   pull_request:
-      types: [closed]
-      branches:
-          - main
+    types: [closed]
+    branches:
+      - main
+
 name: Bundle and Publish Sources
+
 jobs:
   build:
     name: Bundle and Publish Sources
@@ -14,15 +16,17 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x] # Updated to stable Node 22 to bypass Node 20 deprecation
 
     steps:
       - name: Checkout Branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4 # Updated from v2 to v4
+
       - name: Setup Node.js environment
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4 # Updated from v1 to v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm' # Speeds up builds by caching npm dependencies
 
       - run: npm install
       - run: npm run bundle
