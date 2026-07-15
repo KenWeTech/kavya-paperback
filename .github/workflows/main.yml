@@ -26,7 +26,6 @@ jobs:
         uses: actions/setup-node@v4 # Updated from v1 to v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm' # Speeds up builds by caching npm dependencies
 
       - run: npm install
       - run: npm run bundle
