@@ -57,7 +57,7 @@ export async function searchRequest(
 		});
 
 		const response = await requestManager.schedule(request, 1);
-		const result = JSON.parse(response.data ?? '[]');
+		const result = JSON.parse(response.data || '[]');
 
 		for (const library of result) {
 			if (library.type === 2 || library.type === 4) {
@@ -82,7 +82,7 @@ export async function searchRequest(
 	
 			// We don't want to throw if the server is unavailable
 			const titleResponse = await requestManager.schedule(titleRequest, 1);
-			const titleResult = JSON.parse(titleResponse.data ?? '[]');
+			const titleResult = titleResponse.data ? JSON.parse(titleResponse.data) : { series: [], persons: [], genres: [], tags: [] };
 	
 			for (const manga of titleResult.series) {
 				if (excludeLibraryIds.includes(manga.libraryId)) {
@@ -124,7 +124,7 @@ export async function searchRequest(
 						}
 	
 						const titleTagResponse = await requestManager.schedule(titleTagRequest, 1);
-						const titleTagResult = JSON.parse(titleTagResponse.data ?? '[]');
+						const titleTagResult = JSON.parse(titleTagResponse.data || '[]');
 	
 						for (const manga of titleTagResult) {
 							if (!titleSearchIds.includes(manga.id)) {
@@ -165,7 +165,7 @@ export async function searchRequest(
 			});
 	
 			const peopleResponse = await requestManager.schedule(peopleRequest, 1);
-			const peopleResult = JSON.parse(peopleResponse.data ?? '[]');
+			const peopleResult = JSON.parse(peopleResponse.data || '[]');
 	
 			for (const people of peopleResult) {
 				if (peopleTags.includes(people.name)) {
@@ -181,7 +181,7 @@ export async function searchRequest(
 			});
 	
 			const tagResponse = await requestManager.schedule(tagRequst, 1);
-			const tagResult = JSON.parse(tagResponse.data ?? '[]');
+			const tagResult = JSON.parse(tagResponse.data || '[]');
 	
 			for (const manga of tagResult) {
 				tagSearchTiles.push(
