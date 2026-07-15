@@ -226,7 +226,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 		});
 
 		const libraryResponse = await this.requestManager.schedule(libraryRequest, 1);
-		const libraryResult = JSON.parse(libraryResponse.data ?? '[]');
+		const libraryResult = JSON.parse(libraryResponse.data || '[]');
 
 		for (const library of libraryResult) {
 			if (excludeUnsupportedLibrary && library.type === 2) continue;
@@ -247,7 +247,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 
 			promises.push(
 				this.requestManager.schedule(request, 1).then((response) => {
-					const result = JSON.parse(response.data ?? '[]');
+					const result = JSON.parse(response.data || '[]');
 
 					const names: string[] = [];
 					const tags: Tag[] = [];
@@ -347,7 +347,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 		});
 
 		const response = await this.requestManager.schedule(request, 1);
-		const result = JSON.parse(response.data ?? '[]');
+		const result = JSON.parse(response.data || '[]');
 
 		const excludeLibraryIds: number[] = [];
 		
@@ -409,7 +409,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 			// Get the section data
 			promises.push(
 				this.requestManager.schedule(request, 1).then((response) => {
-					const result = JSON.parse(response.data ?? '[]');
+					const result = JSON.parse(response.data || '[]');
 					this.cacheManager.setCachedData(reqeustToString(request), result);
 
 					const tiles: PartialSourceManga[] = [];
@@ -494,7 +494,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 
 		if (result === undefined) {
 			const response = await this.requestManager.schedule(request, 1);
-			result = JSON.parse(response.data ?? '[]');
+			result = JSON.parse(response.data || '[]');
 		}
 
 		if (useBuiltInCache) {
@@ -509,7 +509,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 			});
 
 			const libraryResponse = await this.requestManager.schedule(libraryRequest, 1);
-			const libraryResult = JSON.parse(libraryResponse.data ?? '[]');
+			const libraryResult = JSON.parse(libraryResponse.data || '[]');
 
 			for (const library of libraryResult) {
 				if (library.type === 2) excludeLibraryIds.push(library.id);
@@ -597,7 +597,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 					method: 'GET',
 				});
 				const response = await this.requestManager.schedule(request, 1);
-				const result = JSON.parse(response?.data ?? '{}');
+				const result = JSON.parse(response?.data || '{}');
 
 				return [
 					App.createDUISection({
@@ -674,7 +674,7 @@ export class Kavya implements ChapterProviding, HomePageSectionsProviding, Manga
 				});
 
 				const chapterResponse = await this.requestManager.schedule(chapterRequest, 1);
-				const chapterResult = JSON.parse(chapterResponse?.data ?? '{}');
+				const chapterResult = JSON.parse(chapterResponse?.data || '{}');
 
 				const progressRequest = App.createRequest({
 					url: `${kavitaAPI.url}/Reader/progress`,
