@@ -1162,7 +1162,7 @@ var _Sources = (() => {
         method: "GET"
       });
       const response = await requestManager.schedule(request, 1);
-      const result2 = JSON.parse(response.data ?? "[]");
+      const result2 = JSON.parse(response.data || "[]");
       for (const library of result2) {
         if (library.type === 2 || library.type === 4) {
           excludeLibraryIds.push(library.id);
@@ -1181,7 +1181,7 @@ var _Sources = (() => {
           method: "GET"
         });
         const titleResponse = await requestManager.schedule(titleRequest, 1);
-        const titleResult = JSON.parse(titleResponse.data ?? "[]");
+        const titleResult = titleResponse.data ? JSON.parse(titleResponse.data) : { series: [], persons: [], genres: [], tags: [] };
         for (const manga of titleResult.series) {
           if (excludeLibraryIds.includes(manga.libraryId)) {
             continue;
@@ -1217,7 +1217,7 @@ var _Sources = (() => {
                   });
               }
               const titleTagResponse = await requestManager.schedule(titleTagRequest, 1);
-              const titleTagResult = JSON.parse(titleTagResponse.data ?? "[]");
+              const titleTagResult = JSON.parse(titleTagResponse.data || "[]");
               for (const manga of titleTagResult) {
                 if (!titleSearchIds.includes(manga.id)) {
                   titleSearchIds.push(manga.id);
@@ -1253,7 +1253,7 @@ var _Sources = (() => {
           method: "GET"
         });
         const peopleResponse = await requestManager.schedule(peopleRequest, 1);
-        const peopleResult = JSON.parse(peopleResponse.data ?? "[]");
+        const peopleResult = JSON.parse(peopleResponse.data || "[]");
         for (const people of peopleResult) {
           if (peopleTags.includes(people.name)) {
             body[KAVITA_PERSON_ROLES[people.role]] = body[KAVITA_PERSON_ROLES[people.role]] ?? [];
@@ -1266,7 +1266,7 @@ var _Sources = (() => {
           method: "POST"
         });
         const tagResponse = await requestManager.schedule(tagRequst, 1);
-        const tagResult = JSON.parse(tagResponse.data ?? "[]");
+        const tagResult = JSON.parse(tagResponse.data || "[]");
         for (const manga of tagResult) {
           tagSearchTiles.push(
             App.createPartialSourceManga({
