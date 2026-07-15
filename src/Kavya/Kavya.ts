@@ -1,7 +1,9 @@
 import {
+	BadgeColor,
 	Chapter,
 	ChapterDetails,
 	ChapterProviding,
+	ContentRating,
 	DUIForm,
 	DUISection,
 	HomePageSectionsProviding,
@@ -14,12 +16,13 @@ import {
 	RequestManagerProviding,
 	SearchRequest,
 	SearchResultsProviding,
-	Source,
+	SourceInfo,
+	SourceIntents,
 	SourceManga,
 	Tag,
 	TagSection,
 	TrackerActionQueue
-} from '@paperback/types/lib/compat/0.8';
+} from '@paperback/types';
 import {
 	serverSettingsMenu
 } from './Settings';
@@ -40,7 +43,25 @@ const sortHelper = (a: any, b: any) => {
 	return a.volume === 0 || b.volume === 0 ? b.volume - a.volume : a.volume - b.volume;
 }
 
-export class Kavya extends Source implements ChapterProviding, HomePageSectionsProviding, MangaProgressProviding, MangaProviding, RequestManagerProviding, SearchResultsProviding {
+export const KavyaInfo: SourceInfo = {
+	version: '1.3.6',
+	name: 'Kavya',
+	icon: 'icon.png',
+	author: 'ACK72',
+	authorWebsite: 'https://github.com/ACK72',
+	description: 'Kavita client extension for Paperback',
+	contentRating: ContentRating.EVERYONE,
+	websiteBaseURL: 'https://www.kavitareader.com/',
+	sourceTags: [
+		{
+			text: 'Kavita',
+			type: BadgeColor.GREEN,
+		},
+	],
+	intents: SourceIntents.COLLECTION_MANAGEMENT | SourceIntents.HOMEPAGE_SECTIONS | SourceIntents.MANGA_CHAPTERS | SourceIntents.MANGA_TRACKING | SourceIntents.SETTINGS_UI
+};
+
+export class Kavya implements ChapterProviding, HomePageSectionsProviding, MangaProgressProviding, MangaProviding, RequestManagerProviding, SearchResultsProviding {
 	stateManager = App.createSourceStateManager();
 
 	cacheManager = new CacheManager();
@@ -52,7 +73,7 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 		interceptor: this.interceptor
 	});
 
-	override async getSourceMenu(): Promise<DUISection> {
+	async getSourceMenu(): Promise<DUISection> {
 		return App.createDUISection({
 			id: 'main',
 			header: 'Source Settings',
@@ -92,9 +113,6 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 			const response = await this.requestManager.schedule(request, 1);
 			const result = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
 
-			let i = 0;
-			let j = 1;
-
 			for (const rlItem of result) {
 				const progress: string = rlItem.pagesRead === 0 ? '' : rlItem.pagesTotal === rlItem.pagesRead ? '· Read' : `· Reading ${rlItem.pagesRead} page`;
 				
@@ -104,10 +122,8 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 					chapNum: rlItem.order + 1,
 					name: `${rlItem.seriesName} #${rlItem.chapterNumber}`,
 					time: new Date(rlItem.releaseDate),
-					volume: rlItem.isSpecial ? 0 : rlItem.volumeNumber === '-100000' ? 0 : parseFloat(rlItem.volumeNumber) , // assign both special and chapters w/o volumes w/ volume 0 as it's hidden by paperback
 					group: `${(rlItem.isSpecial ? 'Specials · ' : '')}${rlItem.pagesTotal} pages ${progress}`,
-					_index: i++,
-					// sortIndex is unused, as it seems to have an issue when changing the sort order
+					_index: rlItem.order,
 				};
 				
 				if (rlItem.isSpecial) specials.push(item);
@@ -123,8 +139,9 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 			const response = await this.requestManager.schedule(request, 1);
 			const result = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
 
-		let i = 0;
-		let j = 1;
+			let i = 0;
+			let j = 1;
+			
 			for (const volume of result) {
 				for (const chapter of volume.chapters) {
 					const name = chapter.number === chapter.range ? chapter.titleName ?? '' : `${chapter.range.replace(`${chapter.number}-`, '')}${chapter.titleName ? ` - ${chapter.titleName}` : ''}`;
@@ -192,7 +209,7 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 		return await searchRequest(searchQuery, metadata, this.requestManager, this.interceptor, this.stateManager, this.cacheManager);
 	}
 
-	override async getSearchTags(): Promise<TagSection[]> {
+	async getSearchTags(): Promise<TagSection[]> {
 		// This function is also called when the user search in an other source. It should not throw if the server is unavailable.
 		if (!(await this.interceptor.isServerAvailable())) {
 			return [];
@@ -261,7 +278,7 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 		return tagNames.map((tag) => tagSections[tag]);
 	}
 
-	override async getHomePageSections(
+	async getHomePageSections(
 		sectionCallback: (section: HomeSection) => void
 	): Promise<void> {
 		// This function is called on the homepage and should not throw if the server is unavailable
@@ -428,7 +445,7 @@ export class Kavya extends Source implements ChapterProviding, HomePageSectionsP
 		await Promise.all(promises);
 	}
 
-	override async getViewMoreItems(
+	async getViewMoreItems(
 		homepageSectionId: string,
 		metadata: any
 	): Promise<PagedResults> {

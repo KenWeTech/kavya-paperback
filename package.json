@@ -7,10 +7,10 @@
 	"scripts": {
 		"start": "tsc && node dist/api.js",
 		"build": "tsc",
-		"test": "mocha --timeout 300000 -r ts-node/register src/**/*.test.ts",
+		"test": "node_modules/.bin/mocha --timeout 300000 -r ts-node/register src/**/*.test.ts",
 		"coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test",
-		"bundle": "npx paperback-cli bundle",
-		"serve": "npx paperback-cli serve"
+		"bundle": "paperback bundle",
+		"serve": "paperback serve"
 	},
 	"repository": {
 		"type": "git",
