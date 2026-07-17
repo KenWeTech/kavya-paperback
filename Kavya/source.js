@@ -1327,12 +1327,12 @@ var _Sources = (() => {
     return a.volume === 0 || b.volume === 0 ? b.volume - a.volume : a.volume - b.volume;
   };
   var KavyaInfo = {
-    version: "1.3.6",
+    version: "1.3.6-fix",
     name: "Kavya",
     icon: "icon.png",
-    author: "ACK72",
-    authorWebsite: "https://github.com/ACK72",
-    description: "Kavita client extension for Paperback",
+    author: "KenWeTech",
+    authorWebsite: "https://github.com/KenWeTech",
+    description: "Forked version of the Kavita client extension for Paperback",
     contentRating: import_types.ContentRating.EVERYONE,
     websiteBaseURL: "https://www.kavitareader.com/",
     sourceTags: [
