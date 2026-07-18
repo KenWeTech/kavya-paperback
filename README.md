@@ -8,10 +8,43 @@
 Kavya, A [Kavita](https://www.kavitareader.com/) client extension, for [Paperback](https://paperback.moe/)
 
 
-## Installation source
-You can install paperback extension source from below url
+
+## How to Install Extension in Paperback
+
+Follow these steps to install the extension:
+
+Step 1 -
+**Prepare the App:**
+
+Open the  **Paperback**  app so it is running in the background.
+
+Step 2 -
+**Install source:**
+
+You can install kavya paperback extension source from url below:
 
 [`https://KenWeTech.github.io/kavya-paperback`](https://KenWeTech.github.io/kavya-paperback)
+
+Step 3 -
+**Finding Your Kavita API Key:**
+
+Kavita 0.8+ uses named Auth Keys:
+
+1. In Kavita, go to the **Admin Panel** (gear icon, top right)
+2. Navigate to **Auth Keys / OPDS**
+3. Use an existing key or create a new one with **+ New**
+4. Copy the key value to paste it into Paperback's Kavya settings
+
+Step 4 -
+**Configure Kavya Settings:**
+
+In Paperback → Extensions → Kavya → Settings:
+
+| Setting | Value |
+|---|---|
+| Server URL | Your Kavita server URL (e.g. `https://kavita.example.com`) |
+| API Key | Your Kavita Auth Key (see below) |
+| Page Size | 20 for iPhone, 40 for iPad |
 
 ## Requirements
 - 0.8 or newer version of Paperback
@@ -38,3 +71,5 @@ Paperback's reader only handles image-based pages. The following content types w
 - PDFs (Kavita extracts each page as an image server-side)
 
 To keep your home screen clean, enable **Exclude Book & Novel Type Libraries** in the Kavya source settings. This hides unsupported libraries entirely.
+
+
