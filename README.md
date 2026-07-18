@@ -11,7 +11,7 @@ Kavya, A [Kavita](https://www.kavitareader.com/) client extension, for [Paperbac
 ## Installation source
 You can install paperback extension source from below url
 
-[`https://kenketech.github.io/kavya-paperback`](https://KenWeTech.github.io/kavya-paperback)
+[`https://KenWeTech.github.io/kavya-paperback`](https://KenWeTech.github.io/kavya-paperback)
 
 ## Requirements
 - 0.8 or newer version of Paperback
